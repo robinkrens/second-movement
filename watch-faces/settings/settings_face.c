@@ -24,6 +24,7 @@
 
 #include <stdlib.h>
 #include "settings_face.h"
+#include "slcd.h"
 #include "watch.h"
 
 static void clock_setting_display(uint8_t subsecond) {
@@ -36,6 +37,22 @@ static void clock_setting_display(uint8_t subsecond) {
 
 static void clock_setting_advance(void) {
     movement_set_clock_mode_24h(((movement_clock_mode_24h() + 1) % MOVEMENT_NUM_CLOCK_MODES));
+}
+
+static void contrast_setting_display(uint8_t subsecond) {
+	char buf[8];
+	watch_display_text_with_fallback(WATCH_POSITION_TOP_LEFT, "CTRT", "CT");
+	watch_display_text_with_fallback(WATCH_POSITION_BOTTOM, "Contrast", "CTRST");
+	uint8_t contrast = movement_get_contrast();
+	if (subsecond % 2) {
+	    sprintf(buf, "%2d", contrast);
+	    watch_display_text(WATCH_POSITION_TOP_RIGHT, buf);
+	}
+}
+static void contrast_setting_advance(void) {
+	uint8_t contrast = (movement_get_contrast() + 1) & 0x0F;
+	movement_set_contrast(contrast);
+	slcd_set_contrast(contrast);
 }
 
 static void beep_setting_display(uint8_t subsecond) {
@@ -235,7 +252,7 @@ void settings_face_setup(uint8_t watch_face_index, void ** context_ptr) {
         settings_state_t *state = (settings_state_t *)*context_ptr;
         int8_t current_setting = 0;
 
-        state->num_settings = 5; // baseline, without LED settings
+        state->num_settings = 6; // baseline, without LED settings + including contrast
 #ifdef BUILD_GIT_HASH
         state->num_settings++;
 #endif
@@ -252,6 +269,9 @@ void settings_face_setup(uint8_t watch_face_index, void ** context_ptr) {
         state->settings_screens = malloc(state->num_settings * sizeof(settings_screen_t));
         state->settings_screens[current_setting].display = clock_setting_display;
         state->settings_screens[current_setting].advance = clock_setting_advance;
+        current_setting++;
+        state->settings_screens[current_setting].display = contrast_setting_display;
+        state->settings_screens[current_setting].advance = contrast_setting_advance;
         current_setting++;
         state->settings_screens[current_setting].display = beep_setting_display;
         state->settings_screens[current_setting].advance = beep_setting_advance;

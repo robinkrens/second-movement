@@ -76,7 +76,6 @@ typedef union {
         uint8_t led_green_color : 4;        // for general purpose illumination, the green LED value (0-15)
         uint8_t led_blue_color : 4;         // for general purpose illumination, the green LED value (0-15)
         uint8_t time_zone : 6;              // an integer representing an index in the time zone table.
-
         // while Movement itself doesn't implement a clock or display units, it may make sense to include some
         // global settings for watch faces to check. The 12/24 hour preference could inform a clock or a
         // time-oriented complication like a sunrise/sunset timer, and a simple locale preference could tell an
@@ -296,6 +295,8 @@ typedef struct {
     lis2dw_data_rate_t accelerometer_background_rate;
     // threshold for considering the wearer is in motion
     uint8_t accelerometer_motion_threshold;
+    // contrast
+    uint8_t contrast;
 } movement_state_t;
 
 void movement_move_to_face(uint8_t watch_face_index);
@@ -359,6 +360,9 @@ void movement_set_fast_tick_timeout(uint8_t value);
 
 uint8_t movement_get_low_energy_timeout(void);
 void movement_set_low_energy_timeout(uint8_t value);
+
+uint8_t movement_get_contrast(void);
+void movement_set_contrast(uint8_t value);
 
 movement_color_t movement_backlight_color(void);
 void movement_set_backlight_color(movement_color_t color);

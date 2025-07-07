@@ -31,6 +31,7 @@
 #include "slcd.h"
 #include "tc.h"
 #include "adc.h"
+#include "movement.h"
 
  //////////////////////////////////////////////////////////////////////////////////////////
 // Segmented Display
@@ -254,7 +255,7 @@ void watch_enable_display(void) {
     if (_installed_display == WATCH_LCD_TYPE_CUSTOM) {
         slcd_set_contrast(4);
     } else {
-        slcd_set_contrast(9);
+        slcd_set_contrast(movement_get_contrast());
     }
 
     slcd_enable();

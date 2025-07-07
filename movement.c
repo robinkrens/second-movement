@@ -487,6 +487,14 @@ void movement_set_backlight_color(movement_color_t color) {
     movement_state.settings.bit.led_blue_color = color.blue;
 }
 
+uint8_t movement_get_contrast(void) {
+	return movement_state.contrast;
+}
+
+void movement_set_contrast(uint8_t value) {
+	movement_state.contrast = value;
+}
+
 uint8_t movement_get_backlight_dwell(void) {
     return movement_state.settings.bit.led_duration;
 }
@@ -618,6 +626,8 @@ void app_init(void) {
     memset(&movement_state, 0, sizeof(movement_state));
 
     movement_state.has_thermistor = thermistor_driver_init();
+	
+    movement_state.contrast = MOVEMENT_DEFAULT_CONTRAST;
 
     bool settings_file_exists = filesystem_file_exists("settings.u32");
     movement_settings_t maybe_settings;
